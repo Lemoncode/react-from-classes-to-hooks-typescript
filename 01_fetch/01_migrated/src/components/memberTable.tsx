@@ -6,35 +6,33 @@ import { MemberHead } from "./memberHead";
 
 interface Props {}
 
-// We define members as a state (the compoment holding this will be a container
-// component)
-interface State {
-  members: MemberEntity[];
+function useMembers() {
+  const [members, setMembers] = React.useState<MemberEntity[]>([]);
+
+  const loadMembers = () => {
+    memberAPI.getAllMembers().then(members => setMembers(members));
+  };
+
+  return { members, loadMembers };
 }
 
-export class MemberTableComponent extends React.Component<Props, State> {
-  constructor(props: Props) {
-    super(props);
-    // set initial state
-    this.state = { members: [] };
-  }
+export const MemberTableComponent = () => {
+  const { members, loadMembers } = useMembers();
 
-  public componentDidMount() {
-    memberAPI.getAllMembers().then(members => this.setState({ members }));
-  }
+  React.useEffect(() => {
+    loadMembers();
+  }, []);
 
-  public render() {
-    return (
-      <table className="table">
-        <thead>
-          <MemberHead />
-        </thead>
-        <tbody>
-          {this.state.members.map((member: MemberEntity) => (
-            <MemberRow key={member.id} member={member} />
-          ))}
-        </tbody>
-      </table>
-    );
-  }
-}
+  return (
+    <table className="table">
+      <thead>
+        <MemberHead />
+      </thead>
+      <tbody>
+        {members.map((member: MemberEntity) => (
+          <MemberRow key={member.id} member={member} />
+        ))}
+      </tbody>
+    </table>
+  );
+};
