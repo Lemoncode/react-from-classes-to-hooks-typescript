@@ -12,7 +12,7 @@ interface State {
   members: MemberEntity[];
 }
 
-export class MembersTableComponent extends React.Component<Props, State> {
+export class MemberTableComponent extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
     // set initial state
@@ -25,19 +25,16 @@ export class MembersTableComponent extends React.Component<Props, State> {
 
   public render() {
     return (
-      <div className="row">
-        <h2> Members Page</h2>
-        <table className="table">
-          <thead>
-            <MemberHead />
-          </thead>
-          <tbody>
-            {this.state.members.map((member: MemberEntity) => (
-              <MemberRow key={member.id} member={member} />
-            ))}
-          </tbody>
-        </table>
-      </div>
+      <table className="table">
+        <thead>
+          <MemberHead />
+        </thead>
+        <tbody>
+          {this.state.members.map((member: MemberEntity) => (
+            <MemberRow key={member.id} member={member} />
+          ))}
+        </tbody>
+      </table>
     );
   }
 }

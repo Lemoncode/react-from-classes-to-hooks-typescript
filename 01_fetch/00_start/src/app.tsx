@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {MembersTableComponent} from './components/membersTable';
+import {MemberTableComponent} from './components/memberTable';
 
 interface Props {
 }
@@ -23,7 +23,7 @@ export class App extends React.Component<Props, State> {
   public render() {
     return (
       <>
-        <MembersTableComponent/>
+        <MemberTableComponent/>
       </>
     );
   }
