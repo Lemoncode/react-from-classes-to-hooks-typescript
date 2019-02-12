@@ -4,8 +4,6 @@ import { memberAPI } from "../api/memberAPI";
 import { MemberRow } from "./memberRow";
 import { MemberHead } from "./memberHead";
 
-interface Props {}
-
 function useMembers() {
   const [members, setMembers] = React.useState<MemberEntity[]>([]);
 

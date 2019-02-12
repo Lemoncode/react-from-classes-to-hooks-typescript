@@ -37,3 +37,11 @@ export class SessionProvider extends React.Component<{}, State> {
     );
   }
 }
+
+export const withSessionContext = Component => props => (
+  <SessionContext.Consumer>
+    {({ login, updateLogin }) => (
+      <Component {...props} login={login} updateLogin={updateLogin} />
+    )}
+  </SessionContext.Consumer>
+);

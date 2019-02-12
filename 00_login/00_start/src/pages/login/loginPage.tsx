@@ -10,7 +10,7 @@ import { isValidLogin } from "../../api/login";
 import { NotificationComponent } from "../../common";
 import { LoginFormErrors, createDefaultLoginFormErrors } from "./viewmodel";
 import { loginFormValidation } from "./loginValidations";
-import { SessionContext } from "../../common";
+import { SessionContext, withSessionContext } from "../../common";
 
 // https://material-ui.com/guides/typescript/
 const styles = theme =>
@@ -27,96 +27,10 @@ interface State {
   loginFormErrors: LoginFormErrors;
 }
 
-function useLogin() {
-  const [loginInfo, setLoginInfo] = React.useState(createEmptyLogin());
-  const [showLoginFailedMessage, setShowLoginFailedMessage] = React.useState(
-    false
-  );
-  const [loginFormErrors, setLoginFormErrors] = React.useState(
-    createDefaultLoginFormErrors()
-  );
-
-  return {
-    loginInfo,
-    setLoginInfo,
-    showLoginFailedMessage,
-    setShowLoginFailedMessage,
-    loginFormErrors,
-    setLoginFormErrors
-  };
-}
-
 interface Props extends RouteComponentProps, WithStyles<typeof styles> {
+  updateLogin: (value) => void;
 }
 
-const LoginPageInner = (props: Props) => {
-  const {
-    loginInfo,
-    setLoginInfo,
-    showLoginFailedMessage,
-    setShowLoginFailedMessage,
-    loginFormErrors,
-    setLoginFormErrors
-  } = useLogin();
-
-  const loginContext = React.useContext(SessionContext);
-
-  const onLogin = () => {
-    loginFormValidation.validateForm(loginInfo).then(formValidationResult => {
-      if (formValidationResult.succeeded) {
-        if (isValidLogin(loginInfo)) {
-          loginContext.updateLogin(loginInfo.login);
-          props.history.push("/pageB");
-        } else {
-          setShowLoginFailedMessage(true);
-        }
-      } else {
-        alert("error, review the fields");
-      }
-    });
-  };
-
-  const onUpdateLoginField = (name: string, value) => {
-    setLoginInfo({
-      ...loginInfo,
-      [name]: value
-    });
-
-    loginFormValidation
-      .validateField(loginInfo, name, value)
-      .then(fieldValidationResult => {
-        setLoginFormErrors({
-          ...loginFormErrors,
-          [name]: fieldValidationResult
-        });
-      });
-  };
-
-  const { classes } = props;
-
-  return (
-    <>
-      <Card className={classes.card}>
-        <CardHeader title="Login" />
-        <CardContent>
-          <LoginForm
-            onLogin={onLogin}
-            onUpdateField={onUpdateLoginField}
-            loginInfo={loginInfo}
-            loginFormErrors={loginFormErrors}
-          />
-        </CardContent>
-      </Card>
-      <NotificationComponent
-        message="Invalid login or password, please type again"
-        show={showLoginFailedMessage}
-        onClose={() => setShowLoginFailedMessage(false)}
-      />
-    </>
-  );
-};
-
-/*
 class LoginPageInner extends React.Component<Props, State> {
   constructor(props) {
     super(props);
@@ -189,6 +103,7 @@ class LoginPageInner extends React.Component<Props, State> {
     );
   }
 }
-*/
 
-export const LoginPage = withStyles(styles)(withRouter<Props>(LoginPageInner));
+export const LoginPage = withSessionContext(
+  withStyles(styles)(withRouter<Props>(LoginPageInner))
+);
