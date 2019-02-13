@@ -11,11 +11,11 @@ Under each example folder you will find two subfolders:
 
 ## 00_login-page
 
-In this application is composed by a login page (class based + state) and a second page that shows the logged in user (making use of context + hoc to keep the login name as a field available globally).
+This application is composed by a login page (class based + state) and a second page that shows the logged in user (making use of context + hoc to keep the login name as a field available globally).
 
 Migration process:
 
-- Migrate the login page from classes to stateless using hooks and access the context using the _useContext_ effect.
+- Migrate the login page from class component to function compon ent using hooks and access the context using the _useContext_ effect.
 
 - Migrate page B (just displays the name of the user logged in), remove the usage of an HOC to inject the login context and use the effect _useContext_.
 
@@ -23,12 +23,12 @@ Migration process:
 
 For the login page:
 
-- We are using the effect to store in the context the user name (once the user has successfully logged in).
+- Use the _useContext_ effect to store in the context the user name (once the user has successfully logged in).
 - We have created two custom hooks:
   - One to store the login information that the user is entering.
   - Another to store the form error information.
 
-> About creating two custom hooks splitting the state instead of having one (like we use to do in _class components_), you can read the entry
+> About why creating two custom hooks splitting the state instead of having one (like we use to do in _class components_), you can read the entry
 > _Should I use one or many state variable_ from the [reactjs hooks-faq](https://reactjs.org/docs/hooks-faq.html#should-i-use-one-or-many-state-variables)
 
 **Original LoginPage class based component (extract)**
@@ -282,7 +282,7 @@ export const PageB = (props: Props) => {
 };
 ```
 
-> As bonus we there's a sample called _02_migrated_reducer_ that uses the _userReducer_ effect to store
+> you can find an additioanl sample called _02_migrated_reducer_ that uses the _userReducer_ effect to store
 > the login form errors.
 
 ## 01_fetch
@@ -298,7 +298,7 @@ Migration process:
 - Refactor _MemberTable_ component to be a function component.
 - Create a custom hook to hold the member list and expose the
   _loadmemberlist_ function.
-- Call _useEffect_ with an empty array of parameters (This tells React that your effect doesn’t depend on any values from props or state, so it never needs to re-run).
+- Call _useEffect_ passing as a second argument an empty array (This tells React that your effect doesn’t depend on any values from props or state, so it never needs to re-run).
 
 **Original class based component**
 
