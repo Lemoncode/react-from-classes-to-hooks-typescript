@@ -23,6 +23,14 @@ const styles = theme =>
 
 function useLogin() {
   const [loginInfo, setLoginInfo] = React.useState(createEmptyLogin());
+
+  return {
+    loginInfo,
+    setLoginInfo
+  };
+}
+
+function useErrorHandling() {
   const [showLoginFailedMessage, setShowLoginFailedMessage] = React.useState(
     false
   );
@@ -31,8 +39,6 @@ function useLogin() {
   );
 
   return {
-    loginInfo,
-    setLoginInfo,
     showLoginFailedMessage,
     setShowLoginFailedMessage,
     loginFormErrors,
@@ -43,14 +49,14 @@ function useLogin() {
 interface Props extends RouteComponentProps, WithStyles<typeof styles> {}
 
 const LoginPageInner = (props: Props) => {
+  const { loginInfo, setLoginInfo } = useLogin();
+
   const {
-    loginInfo,
-    setLoginInfo,
     showLoginFailedMessage,
     setShowLoginFailedMessage,
     loginFormErrors,
     setLoginFormErrors
-  } = useLogin();
+  } = useErrorHandling();
 
   const loginContext = React.useContext(SessionContext);
 
