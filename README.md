@@ -11,17 +11,25 @@ Under each example folder you will find two subfolders:
 
 ## 00_login-page
 
-In this application we present a login page (class based + state) and a second page that shows the logged in user (making use of context + hoc to keep the login name as a field available globally).
+In this application is composed by a login page (class based + state) and a second page that shows the logged in user (making use of context + hoc to keep the login name as a field available globally).
 
-In the migration process:
+Migration process:
 
-- Migrate the login page from classes to stateless using hooks (created useLogin) and use the context using the (_useContext_) effect.
+- Migrate the login page from classes to stateless using hooks and access the context using the _useContext_ effect.
 
-- Migrate the page B, remove the usage of an HOC to inject the login context and use the effect _useContext_
+- Migrate page B (just displays the name of the user logged in), remove the usage of an HOC to inject the login context and use the effect _useContext_.
 
 ### LoginPage
 
-Use custom hoo
+For the login page:
+
+- We are using the effect to store in the context the user name (once the user has successfully logged in).
+- We have created two custom hooks:
+  - One to store the login information that the user is entering.
+  - Another to store the form error information.
+
+> About creating two custom hooks splitting the state instead of having one (like we use to do in _class components_), you can read the entry
+> _Should I use one or many state variable_ from the [reactjs hooks-faq](https://reactjs.org/docs/hooks-faq.html#should-i-use-one-or-many-state-variables)
 
 **Original LoginPage class based component (extract)**
 
@@ -118,9 +126,19 @@ export const LoginPage = withSessionContext(
 
 **Migrated LoginPage class based component (extract)**
 
+_./00_login/01_migrated/src/pages/login/loginPage.tsx_
+
 ```typescript
 function useLogin() {
   const [loginInfo, setLoginInfo] = React.useState(createEmptyLogin());
+
+  return {
+    loginInfo,
+    setLoginInfo
+  };
+}
+
+function useErrorHandling() {
   const [showLoginFailedMessage, setShowLoginFailedMessage] = React.useState(
     false
   );
@@ -129,8 +147,6 @@ function useLogin() {
   );
 
   return {
-    loginInfo,
-    setLoginInfo,
     showLoginFailedMessage,
     setShowLoginFailedMessage,
     loginFormErrors,
@@ -141,14 +157,14 @@ function useLogin() {
 interface Props extends RouteComponentProps, WithStyles<typeof styles> {}
 
 const LoginPageInner = (props: Props) => {
+  const { loginInfo, setLoginInfo } = useLogin();
+
   const {
-    loginInfo,
-    setLoginInfo,
     showLoginFailedMessage,
     setShowLoginFailedMessage,
     loginFormErrors,
     setLoginFormErrors
-  } = useLogin();
+  } = useErrorHandling();
 
   const loginContext = React.useContext(SessionContext);
 
@@ -210,10 +226,66 @@ const LoginPageInner = (props: Props) => {
 export const LoginPage = withStyles(styles)(withRouter<Props>(LoginPageInner));
 ```
 
+### Page B
+
+Instead of using an HOC to inject the propery username from the _context_, we use the _useContext_ effect.
+
+**Original code\***
+_./00_login/00_start/src/pages/b/pageB.tsx_
+
+```typescript
+import * as React from "react";
+import { Link } from "react-router-dom";
+import { SessionContext, withSessionContext } from "../../common/";
+
+interface Props {
+  login: string;
+}
+
+const PageBInner = (props: Props) => (
+  <>
+    <h2>Hello from page B</h2>
+    <br />
+    <br />
+    <h3>Login: {props.login}</h3>
+
+    <Link to="/">Navigate to Login</Link>
+  </>
+);
+
+export const PageB = withSessionContext(PageBInner);
+```
+
+**Migrated code**
+
+_./00_login/01_migrated/src/pages/b/pageB.tsx_
+
+```typescript
+import * as React from "react";
+import { Link } from "react-router-dom";
+import { SessionContext } from "../../common/";
+
+interface Props {}
+
+export const PageB = (props: Props) => {
+  const loginContext = React.useContext(SessionContext);
+  return (
+    <>
+      <h2>Hello from page B</h2>
+      <br />
+      <br />
+      <h3>Login: {loginContext.login}</h3>
+
+      <Link to="/">Navigate to Login</Link>
+    </>
+  );
+};
+```
+
 ## 01_fetch
 
-In this application we just fetch from Github api the list of members
-belonging to a given group (lemoncode).
+In this application we just fetch from the Github api the list of members
+belonging to a given organization (lemoncode).
 
 The original sample uses a class component that keeps in it's state
 the list of the members (the fetch list is triggered in the _componentDidMount_ event from the class component).
@@ -241,7 +313,6 @@ interface State {
 export class MemberTableComponent extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
-    // set initial state
     this.state = { members: [] };
   }
 
