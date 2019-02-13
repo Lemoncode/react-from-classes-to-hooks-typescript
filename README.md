@@ -283,7 +283,7 @@ export const PageB = (props: Props) => {
 ```
 
 > As bonus we there's a sample called _02_migrated_reducer_ that uses the _userReducer_ effect to store
-the login form errors.
+> the login form errors.
 
 ## 01_fetch
 
@@ -376,6 +376,10 @@ export const MemberTableComponent = () => {
   );
 };
 ```
+
+> Passing an empty array as a second argument, tells React that your effect doesn't depende on any
+> values from props or state, so it never needs to re-run (you get a similar behavior like in _componentDidMount_),
+> more info: https://reactjs.org/docs/hooks-effect.html.
 
 # About Basefactor + Lemoncode
 
