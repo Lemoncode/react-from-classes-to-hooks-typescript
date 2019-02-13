@@ -45,7 +45,12 @@ const actionIds = {
   setLoginFormErrors: "SET_SHOW_LOGIN_FORM_ERRORS"
 };
 
-function formErrorReducer(state: State, action) {
+interface ActionBase {
+  type: string;
+  payload: any;
+}
+
+function formErrorReducer(state: State, action: ActionBase) {
   switch (action.type) {
     case actionIds.setShowLoginFailed:
       return { ...state, setShowLoginFailed: action.payload };
