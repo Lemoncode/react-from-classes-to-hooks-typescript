@@ -282,6 +282,9 @@ export const PageB = (props: Props) => {
 };
 ```
 
+> As bonus we there's a sample called _02_migrated_reducer_ that uses the _userReducer_ effect to store
+the login form errors.
+
 ## 01_fetch
 
 In this application we just fetch from the Github api the list of members
